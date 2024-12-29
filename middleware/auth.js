@@ -1,4 +1,29 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+
+const authUser = async (req, res, next) => {
+    // Extract token from Authorization header
+    const token = req.headers.token;
+    console.log(token);
+
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Not Authorized. Please log in again.' });
+    }
+
+    try {
+        // Verify and decode the token
+        const token_decode = jwt.verify(token, process.env.JWT_SECRET);
+        req.body.userId = token_decode.id; // Add userId to request body
+        next(); // Proceed to the next middleware
+    } catch (error) {
+        console.error("JWT Verification Error:", error);
+        res.status(401).json({ success: false, message: 'Invalid or Expired Token' });
+    }
+};
+
+export default authUser;
+
+
+/*import jwt from 'jsonwebtoken'
 
 const authUser = async (req, res, next) => {
 
@@ -21,4 +46,5 @@ const authUser = async (req, res, next) => {
 
 }
 
-export default authUser;
+export default authUser;*/
+

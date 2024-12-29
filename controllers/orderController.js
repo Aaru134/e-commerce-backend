@@ -21,16 +21,24 @@ const placeOrder = async (req, res) => {
     try {
 
         const { userId, items, amount, address } = req.body;
+        console.log(req.body)
+        if (!userId || typeof userId !== 'string') {
+            return res.status(400).json({ success: false, message: "Invalid userId" });
+        }
+
+
+        console.log(userId, items, amount, address)
 
         const orderData = {
             userId,
             items,
             address,
             amount,
-            PaymentMethod: "COD",
+            paymentMethod: "COD",
             payment: false,
             date: Date.now()
         }
+        console.log(orderData)
 
         const newOrder = new orderModel(orderData)
         await newOrder.save()
@@ -210,7 +218,6 @@ const userOrders = async (req, res) => {
         res.json({ success: false, message: error.message })
     }
 }
-
 
 
 // update order status from Admin Panel
